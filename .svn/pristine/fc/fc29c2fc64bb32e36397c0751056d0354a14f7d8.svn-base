@@ -1,0 +1,94 @@
+/*
+ * TCSS 305 May 13, 2013 
+ */
+package powerpaint;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Line2D;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.event.MouseInputListener;
+
+/**
+ *
+ *
+ * @author Casey Morrison
+ * @version May 13, 2013
+ */
+@SuppressWarnings("serial")
+public class PaintMouseListener extends JComponent implements MouseInputListener {
+  
+  private Point originalPoint;
+  private Point endPoint;
+  private Point clicked;
+  private Line2D line;
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void mouseClicked(final MouseEvent the_event) {
+    clicked = the_event.getPoint();
+    System.err.println(clicked);
+    repaint();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void mouseEntered(final MouseEvent the_event) {
+    // TODO Auto-generated method stub
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void mouseExited(final MouseEvent the_event) {
+    // TODO Auto-generated method stub
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void mousePressed(final MouseEvent the_event) {
+    originalPoint = the_event.getPoint();
+    System.err.println(originalPoint);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void mouseReleased(final MouseEvent the_event) {
+    endPoint = the_event.getPoint();
+    System.err.println(endPoint);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void mouseDragged(final MouseEvent the_event) {
+    endPoint = the_event.getPoint();
+    System.err.println(the_event);
+    repaint();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void mouseMoved(final MouseEvent the_event) {
+    System.err.println(the_event);
+  } 
+}

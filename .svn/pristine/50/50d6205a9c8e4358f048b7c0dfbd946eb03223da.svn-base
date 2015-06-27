@@ -1,0 +1,48 @@
+/*
+ * TCSS 305 May 20, 2013 
+ */
+package powerpaint;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+
+/**
+ * The PencilAction creates an action and the parameters used to create a button.
+ *
+ * @author Casey Morrison
+ * @version May 20, 2013
+ */
+@SuppressWarnings("serial")
+public class PencilAction extends AbstractAction implements Tools {
+  
+  /** Icon used for the Pencil button. */
+  private static final ImageIcon PENCIL = new ImageIcon("pencil_bw.gif");
+  
+  /** The JPanel to associate with this Action. */
+  private final DrawPanel my_panel;
+  
+  /**
+   * Creates a Pencil Action object.
+   * @param the_panel - the drawing panel associated with this line.
+   */
+  public PencilAction(final DrawPanel the_panel) {
+    super("Pencil");
+    my_panel = the_panel;
+    putValue(Action.MNEMONIC_KEY, KeyEvent.VK_P);
+    putValue(Action.SELECTED_KEY, true);
+    putValue(Action.SMALL_ICON, PENCIL);
+    putValue(Action.SHORT_DESCRIPTION, "Use the Pencil tool to draw");
+    putValue("start", true);
+  }
+  
+  /** {@inheritDoc} */
+  @Override
+  public void actionPerformed(final ActionEvent the_action) {
+//    my_panel.setDrawType(1);
+    my_panel.setPencilDraw();
+  }
+}

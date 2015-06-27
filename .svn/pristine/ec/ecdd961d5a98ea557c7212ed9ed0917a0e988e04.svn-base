@@ -1,0 +1,10 @@
+package powerpaint;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+
+public interface Tools extends Action {
+  
+  
+
+}

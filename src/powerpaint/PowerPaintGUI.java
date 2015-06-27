@@ -1,0 +1,114 @@
+/*
+ * TCSS 305 May 13, 2013 
+ */
+package powerpaint;
+
+import java.awt.BorderLayout;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.Action;
+import javax.swing.JFrame;
+
+
+/**
+ * Creates a GUI that lets you draw shapes on it.
+ * It consists of a menu bar, a tool bar and a JPanel.
+ * The JPanel allows you to draw with a pencil, a line, a rectangle or an ellipse.
+ * You can also change the thickness of the lines, the color of the lines and if
+ * there is a visible grid placed over the objects for more precise drawing.
+ *
+ * @author Casey Morrison
+ * @version May 13, 2013
+ */
+@SuppressWarnings("serial")
+public class PowerPaintGUI extends JFrame {
+  
+  /** The DrawPanel used for drawing 2D graphics on. */
+  private DrawPanel my_panel;
+
+  /**
+   * Uninstantiable constructor.
+   */
+  public PowerPaintGUI() {
+    super("TCSS 305 PowerPaint, Spring 2013");
+  }
+  
+  /**
+   * Sets up and displays the GUI for this application.
+   */
+  public void start() {
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setLocationByPlatform(true);
+    setupComponents();  
+    setVisible(true);
+    pack();
+  }
+
+  /**
+   * Sets up the components in this frame.
+   */
+  private void setupComponents() {
+    setupDrawingPanel();
+    final MenuBar menu_bar = new MenuBar(this, my_panel);
+    final ToolBar tool_bar = new ToolBar();
+
+    menu_bar.createColorMenuButton(new ColorAction(my_panel, menu_bar, tool_bar));
+    tool_bar.createColorToolButton(new ColorAction(my_panel, menu_bar, tool_bar));
+    
+    final Action[] actions = {new PencilAction(my_panel), new LineAction(my_panel), 
+      new RectangleAction(my_panel), new EllipseAction(my_panel)};
+    
+    for (Action a : actions) {
+      menu_bar.createMenuButton(a);
+      tool_bar.createToggleButton(a);
+    }
+    
+    setJMenuBar(menu_bar);
+    add(tool_bar, BorderLayout.SOUTH);
+  }
+  
+  /**
+   * Creates the drawing panel.
+   */
+  private void setupDrawingPanel() {
+    my_panel = new DrawPanel();
+    final MouseAdapter mouse_adapter = new PaintGUIMouseAdapter();
+    my_panel.addMouseListener(mouse_adapter);
+    my_panel.addMouseMotionListener(mouse_adapter);
+    add(my_panel);
+  }
+  
+  /**
+   * Mouse adapter associated with the JPanel DrawPanel.
+   *
+   * @author Casey Morrison
+   * @version May 21, 2013
+   */
+  public class PaintGUIMouseAdapter extends MouseAdapter {
+    /** {@inheritDoc} */
+    @Override
+    public void mouseClicked(final MouseEvent the_event) {
+      my_panel.recordStartPoint(the_event.getPoint());
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void mousePressed(final MouseEvent the_event) {
+      my_panel.recordStartPoint(the_event.getPoint());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void mouseDragged(final MouseEvent the_event) {
+      my_panel.recordDragPoint(the_event.getPoint());
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void mouseReleased(final MouseEvent the_event) {
+      my_panel.recordFinalPoint(the_event.getPoint());
+    }
+  }
+}

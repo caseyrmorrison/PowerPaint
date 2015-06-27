@@ -1,0 +1,245 @@
+/*
+ * TCSS 305 May 13, 2013 
+ */
+package powerpaint;
+
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JColorChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+
+/**
+ * Very basic, repetitive and needs to be cleaned up.
+ *
+ * @author Casey Morrison
+ * @version May 13, 2013
+ */
+@SuppressWarnings("serial")
+public class PowerPaintGUI extends JFrame {
+  
+
+  
+  /** The center panel used in the JFrame. */
+  private final JPanel drawingPanel = new JPanel(new FlowLayout());
+  private final JMenu fileMenu = new JMenu("File");;
+  private final JMenu optionsMenu = new JMenu("Options");
+  private final JMenu toolsMenu = new JMenu("Tools");
+  private final JMenu helpMenu = new JMenu("Help");
+  private final JMenuBar menuBar = new JMenuBar();
+  
+  /**
+   * Uninstantiable constructor.
+   */
+  public PowerPaintGUI() {
+    super("TCSS 305 PowerPaint, Spring 2013");
+  }
+  
+  /**
+   * Sets up and displays the GUI for this application.
+   */
+  public void start() {
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setLocationByPlatform(true);
+    setupComponents();  
+    setVisible(true);
+    pack();
+  }
+  
+  /**
+   * Sets up the components in this frame.
+   */
+  private void setupComponents() {
+    // Create the menu.
+    setupMenu();
+    // Create the tool bar.
+    setupToolBar();
+    // Create the JPanel.
+    setupDrawingPanel();
+  }
+  
+  /**
+   * Sets up the Menu bar.
+   */
+  private void setupMenu() {
+
+    setupFileMenu();
+    setupOptionsMenu();
+    setupToolsMenu();
+    setupHelpMenu();
+    
+    setJMenuBar(menuBar);
+    menuBar.add(fileMenu);
+    menuBar.add(optionsMenu);
+    menuBar.add(toolsMenu);
+    menuBar.add(helpMenu);
+  }
+  
+  /** 
+   * Sets up the file menu.
+   */
+  private void setupFileMenu() {
+    fileMenu.setMnemonic(KeyEvent.VK_F);
+    
+    final JMenuItem clear = new JMenuItem("Clear", 'C');
+    final JMenuItem exit = new JMenuItem("Exit", 'x');
+    
+    fileMenu.add(clear);
+    fileMenu.addSeparator();
+    fileMenu.add(exit);
+  }
+  
+  /** 
+   * Sets up the options menu.
+   */
+  private void setupOptionsMenu() {
+    optionsMenu.setMnemonic(KeyEvent.VK_O);
+    
+    final JCheckBoxMenuItem grid = new JCheckBoxMenuItem("Grid");
+    grid.setMnemonic(KeyEvent.VK_G);
+    final JMenu thicknessmenu = new JMenu("Thickness");
+    thicknessmenu.setMnemonic(KeyEvent.VK_T);
+    
+    final ButtonGroup group = new ButtonGroup();
+    final JRadioButtonMenuItem one = new JRadioButtonMenuItem("1", true);
+    one.setMnemonic(KeyEvent.VK_1);
+    final JRadioButtonMenuItem two = new JRadioButtonMenuItem("2");
+    two.setMnemonic(KeyEvent.VK_2);
+    final JRadioButtonMenuItem four = new JRadioButtonMenuItem("4");
+    four.setMnemonic(KeyEvent.VK_4);
+    group.add(one);
+    group.add(two);
+    group.add(four);
+    thicknessmenu.add(one);
+    thicknessmenu.add(two);
+    thicknessmenu.add(four);
+    
+    optionsMenu.add(grid);
+    optionsMenu.add(thicknessmenu);
+  }
+  
+  /** 
+   * Sets up the tools menu.
+   */
+  private void setupToolsMenu() {
+    toolsMenu.setMnemonic(KeyEvent.VK_T);
+    
+    final JMenuItem color = createColorMenuItem();
+    
+    final ButtonGroup group = new ButtonGroup();
+    final JRadioButtonMenuItem pencil = new JRadioButtonMenuItem("Pencil", true);
+    pencil.setMnemonic(KeyEvent.VK_P);
+    final JRadioButtonMenuItem line = new JRadioButtonMenuItem("Line");
+    line.setMnemonic(KeyEvent.VK_L);
+    final JRadioButtonMenuItem rectangle = new JRadioButtonMenuItem("Rectangle");
+    rectangle.setMnemonic(KeyEvent.VK_R);
+    final JRadioButtonMenuItem ellipse = new JRadioButtonMenuItem("Ellipse");
+    ellipse.setMnemonic(KeyEvent.VK_E);
+    group.add(pencil);
+    group.add(line);
+    group.add(rectangle);
+    group.add(ellipse);    
+    
+    toolsMenu.add(color);
+    toolsMenu.addSeparator();
+    toolsMenu.add(pencil);
+    toolsMenu.add(line);
+    toolsMenu.add(rectangle);
+    toolsMenu.add(ellipse);
+  }
+  
+  /** 
+   * Sets up the help menu.
+   */
+  private void setupHelpMenu() {
+    helpMenu.setMnemonic(KeyEvent.VK_H);
+    
+    final JMenuItem about = new JMenuItem("About...", 'A');
+    
+    helpMenu.add(about);
+  }
+  
+  /**
+   * Creates the drawing panel.
+   */
+  private void setupDrawingPanel() {
+
+    final DrawPanel panel = new DrawPanel();
+    add(panel);
+
+  }
+  
+  /**
+   * Creates a color menu item.
+   * @return color - a button to choose colors.
+   */
+  private JMenuItem createColorMenuItem() {
+    final JMenuItem color = new JMenuItem("Color...", 'C');
+    color.setBackground(Color.BLACK);
+    color.setForeground(Color.WHITE);
+    color.addActionListener(new ActionListener() { 
+      public void actionPerformed(final ActionEvent the_event) {
+        final Color result = JColorChooser.showDialog(null, "A Color Chooser", Color.BLACK);
+      }
+    });
+    return color;
+  }
+  
+  /**
+   * Creates a color button.
+   * @return color - a button to choose colors.
+   */
+  private JButton createColorButton() {
+    final JButton color = new JButton("Color...");
+    color.setBackground(Color.BLACK);
+    color.setForeground(Color.WHITE);
+    color.addActionListener(new ActionListener() { 
+      public void actionPerformed(final ActionEvent the_event) {
+        final Color result = JColorChooser.showDialog(null, "A Color Chooser", Color.BLACK);
+      }
+    });
+    return color;
+  }
+  
+  /**
+   * Creates the tool bar.
+   */
+  private void setupToolBar() {
+    final JToolBar bar = new JToolBar("Tools");
+    
+    final JButton color = createColorButton();
+    
+    final ButtonGroup group = new ButtonGroup();
+    final JToggleButton pencil = new JToggleButton ("Pencil", true);
+    final JToggleButton line = new JToggleButton("Line");
+    final JToggleButton rectangle = new JToggleButton("Rectangle");
+    final JToggleButton ellipse = new JToggleButton("Ellipse");
+    group.add(pencil);
+    group.add(line);
+    group.add(rectangle);
+    group.add(ellipse);    
+    
+    bar.add(color);
+    bar.add(pencil);
+    bar.add(line);
+    bar.add(rectangle);
+    bar.add(ellipse);  
+    add(bar, BorderLayout.SOUTH);
+  }
+}

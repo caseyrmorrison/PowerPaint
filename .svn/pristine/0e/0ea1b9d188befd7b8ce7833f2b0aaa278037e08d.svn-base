@@ -1,0 +1,81 @@
+/*
+ * TCSS 305 May 21, 2013 
+ */
+package powerpaint;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
+
+/**
+ *
+ *
+ * @author Casey Morrison
+ * @version May 21, 2013
+ */
+public class ToolStorage {
+  
+  private Shape my_shape;
+  
+  private Line2D my_line;
+  
+  private Ellipse2D my_ellipse;
+  
+  private Rectangle2D my_rectangle;
+  
+  private int my_width;
+  
+  private Color my_color;
+
+  public ToolStorage(Shape the_shape, Color the_color, int the_width) {
+    my_shape = the_shape;
+    my_color = the_color;
+    my_width = the_width;
+  }
+  
+//  public ToolStorage(Ellipse2D the_shape, Color the_color, int the_width) {
+//    my_ellipse = the_shape;
+//    my_color = the_color;
+//    my_width = the_width;
+//  }
+//  
+//  public ToolStorage(Rectangle2D the_shape, Color the_color, int the_width) {
+//    my_rectangle = the_shape;
+//    my_color = the_color;
+//    my_width = the_width;
+//  }
+  
+//  public ToolStorage(Ellipse2D the_shape, Color the_color, int the_width) {
+//    my_ellipse = the_shape;
+//    my_color = the_color;
+//    my_width = the_width;
+//  }
+  
+//  public Tools getLine() {
+//    return my_line;
+//  }
+//  
+//  public Ellipse2D getEllipse() {
+//    return my_ellipse;
+//  }
+//  
+//  public Rectangle2D getRectangle() {
+//    return my_rectangle;
+//  }
+  
+  public Shape getShape() {
+    return my_shape;
+  }
+
+  public int getWidth() {
+    return my_width;
+  }
+
+  public Color getColor() {
+    return my_color;
+  } 
+}

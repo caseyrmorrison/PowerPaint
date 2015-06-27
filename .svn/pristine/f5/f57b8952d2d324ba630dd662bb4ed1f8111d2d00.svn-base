@@ -1,0 +1,17 @@
+/*
+ * TCSS 305 May 13, 2013 
+ */
+package powerpaint;
+
+/**
+ *
+ *
+ * @author Casey Morrison
+ * @version May 13, 2013
+ */
+public class Menu {
+  
+  public Menu() {
+    
+  }
+}

@@ -1,0 +1,48 @@
+/*
+ * TCSS 305 May 20, 2013 
+ */
+package powerpaint;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+
+/**
+ * The EllipseAction creates an action and the parameters used to create a button.
+ *
+ * @author Casey Morrison
+ * @version May 20, 2013
+ */
+@SuppressWarnings("serial")
+public class EllipseAction extends AbstractAction implements Tools {
+  
+  /** Icon used for the Ellipse button. */
+  private static final ImageIcon ELLIPSE = new ImageIcon("ellipse_bw.gif");
+  
+  /** The JPanel to associate with this Action. */
+  private final DrawPanel my_panel;
+  
+  /**
+   * Creates an Ellipse Action object.
+   * @param the_panel - the drawing panel associated with this Ellipse.
+   */
+  public EllipseAction(final DrawPanel the_panel) {
+    super("Ellipse");
+    my_panel = the_panel;
+    putValue(Action.MNEMONIC_KEY, KeyEvent.VK_E);
+    putValue(Action.SELECTED_KEY, true);
+    putValue(Action.SMALL_ICON, ELLIPSE);
+    putValue(Action.SHORT_DESCRIPTION, "Use the Ellipse tool to draw");
+    putValue("start", false);
+  }
+  
+  /** {@inheritDoc} */
+  @Override
+  public void actionPerformed(final ActionEvent the_action) {
+    my_panel.setEllipseDraw();
+//    my_panel.setDrawType(4);
+  }
+}

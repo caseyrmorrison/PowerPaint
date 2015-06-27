@@ -1,0 +1,355 @@
+/*
+ * TCSS 305 May 13, 2013 
+ */
+package powerpaint;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JPanel;
+
+/**
+ *
+ *
+ * @author Casey Morrison
+ * @version May 13, 2013
+ */
+@SuppressWarnings("serial")
+public class DrawPanel extends JPanel {
+  
+  /** The background color of the panel. */
+  public static final Color BACKGROUND_COLOR = Color.WHITE;
+  
+  /** The color to paint with. */
+  public static final Color FOREGROUND_COLOR = Color.BLACK;
+  
+  /** The default size for this JPanel. */
+  private static final Dimension DEFUALT_SIZE = new Dimension(400, 300);
+  
+  /** The starting point used to create the first line. */
+  private static final Point DEFAULT_POINT = new Point(-99999, -99999);
+  
+  /** The width and height of the grid squares. */
+  private static final int DEFUALT_GRID_HEIGHT_AND_WIDTH = 10;
+  
+  /** The point used to reset the points to null. */
+  private static final Point NO_POINT = null;
+  
+  /** The line width. */
+  private int my_thickness = 1;
+  
+  /** The starting line way out of bounds so it doesn't show. */
+  private Line2D my_line = new Line2D.Double(DEFAULT_POINT, DEFAULT_POINT);
+
+  /** The color of the line. */
+  private Color my_color = Color.BLACK;
+  
+  /** The list of tools. */
+  private List<ToolStorage> my_tools;
+  
+  /** The starting Point of the drawing object. */
+  private Point my_point1;
+  
+  /** The ending Point of the drawing object. */
+  private Point my_point2;
+  
+  private final List<Point> my_lines;
+  
+  private final List<Point> my_ellipses;
+  
+  private final List<Point> my_rectangles;
+  
+  private final List<Point> my_pencils;
+
+  private int my_num;
+  
+  /** The boolean value for choosing the drawing, true if it you are drawing an ellipse. */
+  private boolean is_ellipse;
+
+  /** The boolean value for choosing the drawing, true if it you are drawing a pencil. */
+  private boolean is_pencil = true;
+
+  /** The boolean value for choosing the drawing, true if it you are drawing a rectangle. */
+  private boolean is_rectangle;
+
+  /** The boolean value for choosing the drawing, true if it you are drawing a line. */
+  private boolean is_line;
+  
+  /**
+   * The path being created.
+   */
+  private final GeneralPath my_path;
+
+  /** The variable used for turning the grid on and off, true is on false is off. */
+  private boolean my_grid_value;
+  
+  
+  /**
+   * Constructs a new draw panel.
+   */
+  public DrawPanel() {
+    super();
+    setPreferredSize(DEFUALT_SIZE);
+    setBackground(BACKGROUND_COLOR);
+    
+    my_path = new GeneralPath();
+    my_tools = new ArrayList<ToolStorage>();
+    my_lines = new ArrayList<Point>();
+    my_ellipses = new ArrayList<Point>();
+    my_rectangles = new ArrayList<Point>();
+    my_pencils = new ArrayList<Point>();
+    
+  }
+  
+  /**
+   * Records the start point when the mouse is clicked.
+   * @param the_point - the point used to start the object for drawing.
+   */
+  public void recordStartPoint(final Point the_point) {
+    if (is_pencil) {
+      if (my_point2 != null) {
+//        my_pencils.add(my_point1);
+//        my_pencils.add(my_point2);
+        keepType(new Line2D.Double(my_point1, my_point2));
+      }
+      my_point1 = the_point;
+      my_point2 = NO_POINT;
+    } else if (is_line) {
+      if (my_point2 != null) {
+        keepType(new Line2D.Double(my_point1, my_point2));
+      }
+      my_point1 = the_point;
+      my_point2 = NO_POINT;
+    } else if (is_rectangle) {
+      if (my_point2 != null) {
+        keepType(new Rectangle2D.Double(my_point1.x, my_point1.y, my_point2.x - my_point1.x,
+                                        my_point2.y - my_point1.y));
+      }
+      my_point1 = the_point;
+      my_point2 = NO_POINT;
+    } else if (is_ellipse) {
+      if (my_point2 != null) {
+        keepType(new Ellipse2D.Double(my_point1.x, my_point1.y, my_point2.x - my_point1.x,
+                                        my_point2.y - my_point1.y));
+      }
+      my_point1 = the_point;
+      my_point2 = NO_POINT;
+    }
+    
+  }
+  
+  /**
+   * Records the points while the mouse is being dragged.
+   * @param the_point - the point that is returned from the mouse listener while dragged.
+   */
+  public void recordDragPoint(final Point the_point) {
+    my_point2 = (Point) the_point.clone();
+//    if (is_pencil) {
+//      my_pencils.add(my_point2);
+//    }
+    keepType(new Line2D.Double(my_point2, my_point2));
+    repaint();
+  }
+  
+  /** 
+   * Records the point from the mouse listener once the mouse is released.
+   * @param the_point - the point used for the final point in the drawn object.
+   */
+  public void recordFinalPoint(final Point the_point) {
+    my_point2 = (Point) the_point.clone();
+    repaint();
+    //keepType();
+  }
+  
+//  public void setDrawType(int the_num) {
+//    my_num = the_num;
+//    switch (my_num) {
+//      case 1: 
+//        is_pencil = true;
+//        is_line = false;
+//        is_rectangle = false;
+//        is_ellipse = false;
+//        resetPoints();
+//        break;
+//      case 2: 
+//        is_pencil = false;
+//        is_line = true;
+//        is_rectangle = false;
+//        is_ellipse = false;
+//        resetPoints();
+//        break;
+//      case 3: 
+//        is_pencil = false;
+//        is_line = false;
+//        is_rectangle = true;
+//        is_ellipse = false;
+//        resetPoints();
+//        break;
+//      case 4: 
+//        is_pencil = false;
+//        is_line = false;
+//        is_rectangle = false;
+//        is_ellipse = true;
+//        resetPoints();
+//        break;
+//      default:
+//        break;
+//    }
+//  }  
+  
+  /** Sets the drawing to a line. */
+  public void setLineDraw() {
+    is_pencil = false;
+    is_line = true;
+    is_rectangle = false;
+    is_ellipse = false;
+    resetPoints();
+  }
+  
+  /** Sets the drawing to a pencil. */
+  public void setPencilDraw() {
+    is_pencil = true;
+    is_line = false;
+    is_rectangle = false;
+    is_ellipse = false;
+    resetPoints();
+  }
+  
+  /** Sets the drawing to a ellipse. */
+  public void setEllipseDraw() {
+    is_pencil = false;
+    is_line = false;
+    is_rectangle = false;
+    is_ellipse = true;
+    resetPoints();
+  }
+  
+  /** Sets the drawing to a rectangle. */
+  public void setRectangleDraw() {
+    is_pencil = false;
+    is_line = false;
+    is_rectangle = true;
+    is_ellipse = false;
+    resetPoints();
+  }
+  
+  public void keepType(final Shape the_shape) {
+      final ToolStorage shape = new ToolStorage(the_shape, my_color, my_thickness);
+      my_tools.add(shape);
+  }
+  
+  /** Resets the start and end points used for drawing. */
+  private void resetPoints() {
+    my_point1 = NO_POINT;
+    my_point2 = NO_POINT;
+  }
+  
+  /**
+   * Sets if the grid is visible.
+   * The grid has squares that are 10x10 pixels.
+   * @param the_grid_value - the boolean value which turns the grid on or off.
+   */
+  public void setGrid(final boolean the_grid_value) {
+    my_grid_value = the_grid_value;
+  }
+  
+  /** {@inheritDoc} */
+  @Override
+  public void paintComponent(final Graphics the_graphics) {
+    super.paintComponent(the_graphics);
+    final Graphics2D g2d = (Graphics2D) the_graphics;
+    
+    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    g2d.setPaint(my_color);
+    g2d.setStroke(new BasicStroke(my_thickness));
+
+//    for (int i = 0; i < my_pencils.size(); i ++) {
+//      final Point p1 = my_pencils.get(i);
+//      final Point p2 = my_pencils.get(i);
+//      if (my_path.getCurrentPoint() == null) {
+//        my_path.moveTo(p1.x, p1.y);
+//      } else {
+//        my_path.moveTo(p2.x, p2.y);
+//        my_path.lineTo(p2.x, p2.y);
+//        g2d.draw(my_path);
+//      }
+//    }
+//    for (int i = 0; i < my_pencils.size(); i++) {
+//      final Point p1 = my_pencils.get(i);
+//      final Point p2 = my_pencils.get(i);
+//      g2d.drawLine(p1.x, p1.y, p2.x, p2.y);
+//    }
+      
+    for (int j = 0; j < my_tools.size(); j++) {
+      g2d.setPaint(my_tools.get(j).getColor());
+      g2d.setStroke(new BasicStroke(my_tools.get(j).getWidth()));
+      g2d.draw(my_tools.get(j).getShape());
+    }
+      
+    if (is_line && my_point2 != null) {
+      g2d.drawLine(my_point1.x, my_point1.y, my_point2.x, my_point2.y);
+    } else if (is_rectangle && my_point2 != null) {
+      g2d.drawRect(my_point1.x, my_point1.y, my_point2.x - my_point1.x,
+                   my_point2.y - my_point1.y);
+    } else if (is_ellipse && my_point2 != null) {
+      g2d.drawOval(my_point1.x, my_point1.y, my_point2.x - my_point1.x,
+                   my_point2.y - my_point1.y);
+    } else if (is_pencil && my_point2 != null) {
+      g2d.drawLine(my_point2.x, my_point2.y, my_point2.x, my_point2.y);
+    }
+    
+    if (my_grid_value) {
+      for (int i = 0; i < getWidth(); i += DEFUALT_GRID_HEIGHT_AND_WIDTH) {
+        g2d.setPaint(Color.GRAY);
+        g2d.setStroke(new BasicStroke(1));
+        g2d.drawLine(i, 0, i, getWidth());
+        g2d.drawLine(0, i, getWidth(), i);
+      }
+    }
+  }
+  
+  /**
+   * Sets the color of the graphics object.
+   * @param the_color - the color the line will be changed to.
+   */
+  public void setColor(final Color the_color) {
+    my_color = the_color;
+  }
+  
+  /**
+   * Gets the current color.
+   * @return my_color - the current color used for drawing.
+   */
+  public Color getColor() {
+    return my_color;
+  }
+  
+  /**
+   * Sets the thickness of the tools being drawn.
+   * @param the_thickness - the values of how thick each tools lines are.
+   */
+  public void setThickness(final int the_thickness) {
+    my_thickness = the_thickness;
+  }
+
+  /**
+   * Clears the drawing panel of all drawings.
+   */
+  public void clearAll() {
+    my_tools.clear();
+    resetPoints();
+    repaint();
+  }
+}
